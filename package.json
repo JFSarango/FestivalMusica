@@ -1,0 +1,24 @@
+{
+  "name": "festival",
+  "version": "1.0.0",
+  "description": "Proyecto de repaso para portafolio personal",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "sass": "sass --watch src/scss:build/css",
+    "dev": "gulp"
+  },
+  "keywords": [
+    "sass",
+    "npm",
+    "gulp",
+    "javascript"
+  ],
+  "author": "Sebastian Sarango",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^5.0.0",
+    "gulp-sass": "^5.1.0",
+    "sass": "^1.79.3"
+  }
+}
