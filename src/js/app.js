@@ -30,8 +30,14 @@ function crearGaleria(){
         //4.- CREAMOS ELEMENTO PARA IMAGENES
         const imagen = document.createElement('IMG');
         //5.- le damos el atributo de src, y como vamos a usar un indice para el nombre, es necesario usar un template string
-        imagen.src=`src/img/gallery/full/${i}.jpg`;
+        // es importante el orden en el que se pone el lazy
+        imagen.loading = "lazy";
+        imagen.width = 250;
+        imagen.height = 150;
+
+        imagen.src=`src/img/gallery/thumb/${i}.jpg`;
         imagen.alt=`Imagen ${i} galería`
+       
 
         // Even Handler
         imagen.onclick = function(){
