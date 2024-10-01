@@ -1,13 +1,15 @@
 import path from "path"
 import fs from "fs"
+import { glob } from "glob"
 
-// como compilar, destino etcs
+// como compilar, destino etc
 import { src, dest, watch, series, parallel } from 'gulp'
 // extraer la dependencias
 import * as dartSass from 'sass'
 import gulpSass from 'gulp-sass'
 import terser from 'gulp-terser'
 import sharp from "sharp"
+
 
 
 //unir las dependencias para no ir a buscarlas en la ruta una a una
@@ -64,14 +66,49 @@ export async function crop(done) {
     }
 }
  
+
+
+//para las imagenes webp
+
+export async function imagenes(done) {
+    const srcDir = './src/img';
+    const buildDir = './build/img';
+    const images =  await glob('./src/img/**/*{jpg,png}')
+
+    images.forEach(file => {
+        const relativePath = path.relative(srcDir, path.dirname(file));
+        const outputSubDir = path.join(buildDir, relativePath);
+        procesarImagenes(file, outputSubDir);
+    });
+    done();
+}
+
+function procesarImagenes(file, outputSubDir) {
+    if (!fs.existsSync(outputSubDir)) {
+        fs.mkdirSync(outputSubDir, { recursive: true })
+    }
+    const baseName = path.basename(file, path.extname(file))
+    const extName = path.extname(file)
+    const outputFile = path.join(outputSubDir, `${baseName}${extName}`)
+    const outputFileWebp = path.join(outputSubDir, `${baseName}.webp`)
+    const outputFileAvif = path.join(outputSubDir, `${baseName}.avif`)//ruta para el archivo avif
+
+    const options = { quality: 80 }//configuramos la calidad 
+    sharp(file).jpeg(options).toFile(outputFile)
+    sharp(file).webp(options).toFile(outputFileWebp)
+    sharp(file).avif(options).toFile(outputFileAvif)
+}
+
+
 export function dev(){
     //watch('src/scss/app.scss', css)
     watch('src/scss/**/*.scss', css) //para ejecutar todos los archivos
     watch('src/js/**/*.js', js) 
+    watch('src/img/**/*.{jpg, png}', imagenes) 
 }
 
 // series: se ejecutan tareas en secuencia
 // paralel: se ejecutan todas las tareas a la vez
 
-export default series(crop, js, css, dev);
+export default series(crop, js, css, imagenes, dev);
 // export default parallel(js,css,dev);
